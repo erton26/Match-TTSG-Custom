@@ -25,7 +25,7 @@ log = get_pylogger(__name__)
         
     
 
-class TextMelMotionDataModule(LightningDataModule):
+class TextMelBlendshapeRotationDataModule(LightningDataModule):
 
     def __init__(
         self,
@@ -37,11 +37,15 @@ class TextMelMotionDataModule(LightningDataModule):
         n_spks,
         pin_memory,
         cleaners,
-        motion_folder,
+        #motion_folder,
+        blendshape_folder,
+        rotation_folder,
         add_blank,
         n_fft,
         n_feats,
-        n_motions,
+        #n_motions,
+        n_blendshapes,
+        n_rotations,
         sample_rate,
         hop_length,
         win_length,
@@ -66,12 +70,14 @@ class TextMelMotionDataModule(LightningDataModule):
         """
         # load and split datasets only if not loaded already
         
-        self.trainset = TextMelMotionDataset(
+        self.trainset = TextMelBlendshapeRotationDataset(
             self.hparams.name,
             self.hparams.train_filelist_path,
             self.hparams.n_spks,
             self.hparams.cleaners,
-            self.hparams.motion_folder,
+            #self.hparams.motion_folder,
+            self.hparams.blendshape_folder,
+            self.hparams.rotation_folder,
             self.hparams.add_blank,
             self.hparams.n_fft,
             self.hparams.n_feats,
@@ -83,12 +89,14 @@ class TextMelMotionDataModule(LightningDataModule):
             self.hparams.data_statistics,
             self.hparams.seed,
         )
-        self.validset = TextMelMotionDataset(
+        self.validset = TextMelBlendshapeRotationDataset(
             self.hparams.name,
             self.hparams.valid_filelist_path,
             self.hparams.n_spks,
             self.hparams.cleaners, 
-            self.hparams.motion_folder,
+            #self.hparams.motion_folder,
+            self.hparams.blendshape_folder,
+            self.hparams.rotation_folder,
             self.hparams.add_blank,
             self.hparams.n_fft,
             self.hparams.n_feats,
@@ -135,15 +143,18 @@ class TextMelMotionDataModule(LightningDataModule):
         pass
 
 
-class TextMelMotionDataset(torch.utils.data.Dataset):
-    def __init__(self, name, filelist_path, n_spks, cleaners, motion_folder, add_blank=True,
+class TextMelBlendshapeRotationDataset(torch.utils.data.Dataset):
+    def __init__(self, name, filelist_path, n_spks, cleaners, #motion_folder,
+                 blendshape_folder, rotation_folder, add_blank=True,
                  n_fft=1024, n_mels=80, sample_rate=22050,
                  hop_length=256, win_length=1024, f_min=0., f_max=8000, data_parameters=None, seed=None):
         self.name = name
         self.filepaths_and_text = parse_filelist(filelist_path)
         self.n_spks = n_spks
         self.filelist_path = Path(filelist_path)
-        self.motion_fileloc = Path(motion_folder)        
+        #self.motion_fileloc = Path(motion_folder)
+        self.blendshape_fileloc = Path(blendshape_folder)
+        self.rotation_fileloc = Path(rotation_folder)
         self.cleaners = cleaners
         self.add_blank = add_blank
         self.n_fft = n_fft
@@ -175,23 +186,42 @@ class TextMelMotionDataset(torch.utils.data.Dataset):
 
         processed_text = self.get_text(text, add_blank=self.add_blank)
         mel = self.get_mel(filepath)
-        motion = self.get_motion(filepath, mel.shape[1])
+        #motion = self.get_motion(filepath, mel.shape[1])
+        blendshape = self.get_blendshape(filepath, mel.shape[1])
+        rotation = self.get_rotation(filepath, mel.shape[1])
         
         return {
             'y': mel,
             'x': processed_text,
-            'y_motion': motion,
+            #'y_motion': motion,
+            'y_blendshape': blendshape,
+            'y_rotation': rotation,
             'text': text,
             'spk': spk
         }
 
-    
+    """
     def get_motion(self, filename, mel_shape, ext=".expmap_86.1328125fps.pkl"):
         file_loc = self.motion_fileloc / Path(Path(filename).name).with_suffix(ext)
         motion = torch.from_numpy(pd.read_pickle(file_loc).to_numpy())
         motion = F.interpolate(motion.T.unsqueeze(0), mel_shape).squeeze(0)
         motion = normalize(motion, self.data_parameters['motion_mean'], self.data_parameters['motion_std'])
         return motion 
+    """
+
+    def get_blendshape(self, filename, mel_shape, ext=".blendshapes.pkl"):
+        file_loc = self.blendshape_fileloc / Path(Path(filename).name).with_suffix(ext)
+        blendshape = torch.from_numpy(pd.read_pickle(file_loc).to_numpy())
+        blendshape = F.interpolate(blendshape.T.unsqueeze(0), mel_shape).squeeze(0)
+        blendshape = normalize(blendshape, self.data_parameters['blendshape_mean'], self.data_parameters['blendshape_std'])
+        return blendshape
+
+    def get_rotation(self, filename, mel_shape, ext=".headrotation.pkl"):
+        file_loc = self.rotation_fileloc / Path(Path(filename).name).with_suffix(ext)
+        rotation = torch.from_numpy(pd.read_pickle(file_loc).to_numpy())
+        rotation = F.interpolate(rotation.T.unsqueeze(0), mel_shape).squeeze(0)
+        rotation = normalize(rotation, self.data_parameters['rotation_mean'], self.data_parameters['rotation_std'])
+        return rotation
 
     def get_mel(self, filepath):
         audio, sr = ta.load(filepath)
@@ -232,21 +262,28 @@ class TextMelMotionBatchCollate:
         y_max_length = fix_len_compatibility(y_max_length)
         x_max_length = max([item['x'].shape[-1] for item in batch])
         n_feats = batch[0]['y'].shape[-2]
-        n_motion = batch[0]['y_motion'].shape[-2]
+        #n_motion = batch[0]['y_motion'].shape[-2]
+        n_blendshape = batch[0]['y_blendshape'].shape[-2]
+        n_rotation = batch[0]['y_rotation'].shape[-2]
         
         y = torch.zeros((B, n_feats, y_max_length), dtype=torch.float32)
         x = torch.zeros((B, x_max_length), dtype=torch.long)
-        y_motion = torch.zeros((B, n_motion, y_max_length), dtype=torch.float32)
+        #y_motion = torch.zeros((B, n_motion, y_max_length), dtype=torch.float32)
+        y_blendshape = torch.zeros((B, n_blendshape, y_max_length), dtype=torch.float32)
+        y_rotation = torch.zeros((B, n_rotation, y_max_length), dtype=torch.float32)
         y_lengths, x_lengths = [], []
         texts, spks = [], []
 
         for i, item in enumerate(batch):
-            y_, x_, y_motion_ = item['y'], item['x'], item['y_motion']
+            #y_, x_, y_motion_ = item['y'], item['x'], item['y_motion']
+            y_, x_, y_blendshape_, y_rotation_ = item['y'], item['x'], item['y_blendshape'], item['y_rotation']
             y_lengths.append(y_.shape[-1])
             x_lengths.append(x_.shape[-1])
             y[i, :, :y_.shape[-1]] = y_
             x[i, :x_.shape[-1]] = x_
-            y_motion[i, :, :y_motion_.shape[-1]] = y_motion_
+            #y_motion[i, :, :y_motion_.shape[-1]] = y_motion_
+            y_blendshape[i, :, :y_blendshape_.shape[-1]] = y_blendshape_
+            y_rotation[i, :, :y_rotation_.shape[-1]] = y_rotation_
             texts.append(item['text'])
             spks.append(item["spk"])
 
@@ -259,7 +296,9 @@ class TextMelMotionBatchCollate:
             'x_lengths': x_lengths, 
             'y': y, 
             'y_lengths': y_lengths, 
-            'y_motion': y_motion, 
+            #'y_motion': y_motion,
+            'y_blendshape': y_blendshape,
+            'y_rotation': y_rotation,
             'texts': texts,
             "spks": spks
         }
