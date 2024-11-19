@@ -13,7 +13,7 @@ from match_ttsg.utils.utils import intersperse
 
 
 def parse_filelist(filelist_path, split_char="|"):
-    with open(filelist_path, encoding="utf-8") as f:
+    with open(filelist_path, encoding="shift-jis") as f:
         filepaths_and_text = [line.strip().split(split_char) for line in f]
     return filepaths_and_text
 

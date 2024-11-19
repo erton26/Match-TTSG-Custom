@@ -14,7 +14,7 @@ hyperparameter. Some cleaners are English-specific. You'll typically want to use
 
 import re
 from unidecode import unidecode
-from text.numbers import normalize_numbers
+from match_ttsg.text.numbers import normalize_numbers
 import pyopenjtalk
 from janome.tokenizer import Tokenizer
 

@@ -52,7 +52,7 @@ class TextMelBlendshapeRotationDataModule(LightningDataModule):
         f_min,
         f_max,
         data_statistics,
-        motion_pipeline_filename,
+        #motion_pipeline_filename,
         seed,
         **kwargs,
     ):
@@ -168,7 +168,8 @@ class TextMelBlendshapeRotationDataset(torch.utils.data.Dataset):
         if data_parameters is not None:
             self.data_parameters = data_parameters
         else:
-            self.data_parameters = { 'mel_mean': 0, 'mel_std': 1, 'motion_mean': 0, 'motion_std': 1 }
+            #self.data_parameters = { 'mel_mean': 0, 'mel_std': 1, 'motion_mean': 0, 'motion_std': 1 }
+            self.data_parameters = { 'mel_mean': 0, 'mel_std': 1, 'blendshape_mean': 0, 'blendshape_std': 1 ,'rotation_mean': 0, 'rotation_std': 1 }
         random.seed(seed)
         random.shuffle(self.filepaths_and_text)
 

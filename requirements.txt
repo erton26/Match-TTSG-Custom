@@ -49,3 +49,5 @@ ffmpeg-python
 # --------- japanese cleaner --------- #
 pyopenjtalk
 janome
+unidic-lite
+mecab-python3
