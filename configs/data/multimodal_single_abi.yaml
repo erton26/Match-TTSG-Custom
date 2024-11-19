@@ -3,7 +3,7 @@ name: multimodal_single_abi
 train_filelist_path: /mnt/c/git/data/multimodal_single_abi/train.txt 
 valid_filelist_path: /mnt/c/git/data/multimodal_single_abi/test.txt
 batch_size: 32
-num_workers: 0 #20
+num_workers: 4 #20
 n_spks: 1
 pin_memory: True
 cleaners: [japanese_accent_cleaners]

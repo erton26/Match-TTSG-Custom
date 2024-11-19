@@ -51,3 +51,6 @@ pyopenjtalk
 janome
 unidic-lite
 mecab-python3
+
+# --------- huggingface --------- #
+huggingface_hub==0.24.7

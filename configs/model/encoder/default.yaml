@@ -2,7 +2,9 @@ encoder_type: RoPE Encoder
 encoder_params:
   n_feats: 
     - ${model.n_feats}
-    - ${model.n_motions}
+    #- ${model.n_motions}
+    - ${model.n_blendshapes}
+    - ${model.n_rotations}
   n_channels: 192
   filter_channels: 768
   filter_channels_dp: 256
