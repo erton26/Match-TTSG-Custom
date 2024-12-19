@@ -11,7 +11,7 @@ from lightning import LightningModule
 from lightning.pytorch.utilities import grad_norm
 
 from match_ttsg import utils
-from match_ttsg.utils.utils import plot_tensor
+#from match_ttsg.utils.utils import plot_tensor
 
 import wandb
 
@@ -200,13 +200,15 @@ class BaseLightningClass(LightningModule, ABC):
                         dataformats="HWC",
                     )
                     """
+                    """
                     self.logger.experiment.log({
-                    f"original/{i}": wandb.Image(
-                        plot_tensor(y.squeeze().cpu()),
-                        caption=f"Epoch {self.current_epoch}"
-                    ),
-                    "epoch": self.current_epoch
-                })
+                        f"original/{i}": wandb.Image(
+                            plot_tensor(y.squeeze().cpu()),
+                            caption=f"Epoch {self.current_epoch}"
+                        ),
+                        "epoch": self.current_epoch
+                    })
+                    """
 
             log.debug("Synthesising...")
             for i in range(2):
@@ -246,7 +248,7 @@ class BaseLightningClass(LightningModule, ABC):
                 self.logger.experiment.add_image(f'generated_enc/rotation_{i}', plot_tensor(y_rotation_enc.squeeze().cpu()), self.current_epoch, dataformats='HWC')
                 self.logger.experiment.add_image(f'generated_dec/rotation_{i}', plot_tensor(y_rotation_dec.squeeze().cpu()), self.current_epoch, dataformats='HWC')
                 """
-
+                """
                 self.logger.experiment.log({
                     f"generated_enc/mel_{i}": wandb.Image(
                         plot_tensor(y_enc.squeeze().cpu()), 
@@ -282,12 +284,14 @@ class BaseLightningClass(LightningModule, ABC):
                     ),
                     "epoch": self.current_epoch
                 })
+                """
                 #self.logger.experiment.add_image(f'generated_enc/motion_{i}', plot_tensor(y_motion_enc.squeeze().cpu()), self.current_epoch, dataformats='HWC')
                 #self.logger.experiment.add_image(f'generated_dec/motion_{i}', plot_tensor(y_motion_dec.squeeze().cpu()), self.current_epoch, dataformats='HWC')
+                """
                 self.logger.experiment.log({f"generated_enc/blendshape_{i}": wandb.Image(plot_tensor(y_blendshape_enc.squeeze().cpu()), caption=f"Epoch {self.current_epoch}"), "epoch": self.current_epoch})
                 self.logger.experiment.log({f"generated_dec/blendshape_{i}": wandb.Image(plot_tensor(y_blendshape_dec.squeeze().cpu()), caption=f"Epoch {self.current_epoch}"), "epoch": self.current_epoch})
                 self.logger.experiment.log({f"generated_enc/rotation_{i}": wandb.Image(plot_tensor(y_rotation_enc.squeeze().cpu()), caption=f"Epoch {self.current_epoch}"), "epoch": self.current_epoch})
                 self.logger.experiment.log({f"generated_dec/rotation_{i}": wandb.Image(plot_tensor(y_rotation_dec.squeeze().cpu()), caption=f"Epoch {self.current_epoch}"), "epoch": self.current_epoch})
-
+                """
     def on_before_optimizer_step(self, optimizer):
         self.log_dict({f"grad_norm/{k}": v for k, v in grad_norm(self, norm_type=2).items()})

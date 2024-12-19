@@ -21,4 +21,4 @@ model:
 
 
 trainer:
-  max_steps: 300000
+  max_steps: 500000
