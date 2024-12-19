@@ -173,7 +173,7 @@ class MatchTTSGCustom(BaseLightningClass):
             "encoder_outputs_rotation": encoder_outputs_rotation,
             "decoder_outputs_rotation": decoder_outputs_rotation,
             "attn": attn[:, :, :y_max_length],
-            "mel": denormalize(decoder_outputs, self.mel_mean, self.mel_std),
+            "mel": denormalize(decoder_outputs_mel, self.mel_mean, self.mel_std),
             #"motion": denormalize(decoder_outputs_motion, self.motion_mean, self.motion_std),
             "blendshape": denormalize(decoder_outputs_blendshape, self.blendshape_mean, self.blendshape_std),
             "rotation": denormalize(decoder_outputs_rotation, self.rotation_mean, self.rotation_std),
