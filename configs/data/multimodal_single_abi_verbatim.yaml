@@ -1,0 +1,45 @@
+_target_: match_ttsg.data.text_mel_blendshape_rotation_datamodule.TextMelBlendshapeRotationDataModule
+name: multimodal_single_abi_verbatim
+train_filelist_path: /mnt/c/git/data/multimodal_single_abi_verbatim/train.txt 
+valid_filelist_path: /mnt/c/git/data/multimodal_single_abi_verbatim/test.txt
+batch_size: 32
+num_workers: 4 #20
+n_spks: 1
+pin_memory: True
+cleaners: [japanese_accent_cleaners]
+#motion_folder: data/tsgd2/processed_sm0_0_86.1328125fps
+blendshape_folder: /mnt/c/git/data/multimodal_single_abi_verbatim/motion_blendshapes
+rotation_folder: /mnt/c/git/data/multimodal_single_abi_verbatim/motion_headrotation
+add_blank: False #True
+n_fft: 1024
+n_feats: 80
+#n_motions: 45
+n_blendshapes: 52
+n_rotations: 3
+sample_rate: 16000
+hop_length: 256
+win_length: 1024
+f_min: 0
+f_max: 8000
+data_statistics:  # Computed for tsg2 dataset
+  #pitch_min: 60.576588
+  #pitch_max: 872.822083
+  #pitch_mean: 152.241898
+  #pitch_std: 39.588459
+  #energy_min: 0.013238
+  #energy_max: 237.996811
+  #energy_mean: 21.58687
+  #energy_std: 23.083025
+  #mel_mean: -5.540806
+  #mel_std: 2.116675
+  #motion_mean: -0.464329 
+  #motion_std: 0.576328
+  mel_mean: -5.264796733856201
+  mel_std: 1.5986379384994507
+  blendshape_mean: 0.11496427655220032
+  blendshape_std: 0.1995350867509842
+  rotation_mean: 0.1603495180606842
+  rotation_std: 6.22273540496826
+#motion_pipeline_filename: data_pipe.expmap_86.1328125fps.sav
+seed: ${seed}
+generate_properties: false
