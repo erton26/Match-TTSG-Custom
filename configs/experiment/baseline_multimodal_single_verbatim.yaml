@@ -10,10 +10,10 @@
 # all parameters below will be merged with parameters from default configurations set above
 # this allows you to overwrite only specified parameters
 
-tags: ["multimodal_single_abi_verbatim"]
+tags: ["multimodal_single_verbatim"]
 
 
-run_name: multimodal_single_abi_verbatim_baseline
+run_name: multimodal_single_verbatim_baseline
 
 model:
   align_with_motion: true
