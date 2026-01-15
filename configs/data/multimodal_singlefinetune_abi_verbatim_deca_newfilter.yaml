@@ -1,0 +1,30 @@
+_target_: match_ttsg.data.text_mel_deca_datamodule.TextMelDECADataModule
+name: multimodal_singlefinetune_abi_verbatim_DECA_newfilter
+train_filelist_path: /home/git/data/multimodal_single_abi_verbatim_DECA_newfilter/train.txt 
+valid_filelist_path: /home/git/data/multimodal_single_abi_verbatim_DECA_newfilter/test.txt
+batch_size: 32
+num_workers: 4 #set to 0 for generating data statistics
+n_spks: 1
+pin_memory: True
+cleaners: [japanese_accent_cleaners]
+expression_folder: /home/git/data/multimodal_single_abi_verbatim_DECA_newfilter/motion_expression
+pose_folder: /home/git/data/multimodal_single_abi_verbatim_DECA_newfilter/motion_pose
+add_blank: False #True
+n_fft: 1024
+n_feats: 80
+n_expressions: 50
+n_poses: 6
+sample_rate: 16000
+hop_length: 256
+win_length: 1024
+f_min: 0
+f_max: 8000
+data_statistics:  # Computed for multimodal_single_abi_verbatim_DECA_newfilter dataset
+  mel_mean: -5.217583656311035
+  mel_std: 1.5713294744491577
+  expression_mean: 0.032850850373506546
+  expression_std: 0.520163893699646
+  pose_mean: -0.002342863939702511
+  pose_std: 0.08045244961977005
+seed: ${seed}
+generate_properties: false

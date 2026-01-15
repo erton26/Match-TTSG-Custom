@@ -1,0 +1,30 @@
+_target_: match_ttsg.data.text_mel_deca_datamodule.TextMelDECADataModule
+name: multimodal_allexcept_kon_verbatim_DECA_newfilter
+train_filelist_path: /home/git/data/multimodal_allexcept_kon_verbatim_DECA_newfilter/train.txt 
+valid_filelist_path: /home/git/data/multimodal_allexcept_kon_verbatim_DECA_newfilter/test.txt
+batch_size: 32
+num_workers: 0 #set to 0 for generating data statistics
+n_spks: 1
+pin_memory: True
+cleaners: [japanese_accent_cleaners]
+expression_folder: /home/git/data/multimodal_allexcept_kon_verbatim_DECA_newfilter/motion_expression
+pose_folder: /home/git/data/multimodal_allexcept_kon_verbatim_DECA_newfilter/motion_pose
+add_blank: False #True
+n_fft: 1024
+n_feats: 80
+n_expressions: 50
+n_poses: 6
+sample_rate: 16000
+hop_length: 256
+win_length: 1024
+f_min: 0
+f_max: 8000
+data_statistics:  # Computed for multimodal_allexcept_kon_verbatim_DECA_newfilter dataset
+  mel_mean: -4.849752902984619
+  mel_std: 1.7821930646896362
+  expression_mean: 0.05386953428387642
+  expression_std: 0.4324733316898346
+  pose_mean: 0.06289919465780258
+  pose_std: 0.08885325491428375
+seed: ${seed}
+generate_properties: false

@@ -164,6 +164,7 @@ synth_output/
 
 # Movement Output
 movement_output/
+output/
 
 # Vocoder
 pretrained_models/
