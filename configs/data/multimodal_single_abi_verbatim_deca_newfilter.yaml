@@ -1,5 +1,5 @@
 _target_: match_ttsg.data.text_mel_deca_datamodule.TextMelDECADataModule
-name: multimodal_allexcept_abi_verbatim_DECA_newfilter
+name: multimodal_single_abi_verbatim_DECA_newfilter
 train_filelist_path: /home/git/data/multimodal_single_abi_verbatim_DECA_newfilter/train.txt 
 valid_filelist_path: /home/git/data/multimodal_single_abi_verbatim_DECA_newfilter/test.txt
 batch_size: 32

@@ -9,6 +9,8 @@ import numpy as np
 import soundfile as sf
 import torch
 from tqdm.auto import tqdm
+import os
+import matplotlib.pyplot as plt
 
 # Hifigan imports
 from match_ttsg.hifigan.config import v1
@@ -64,7 +66,7 @@ def load_vocoder(checkpoint_path):
 
 vocoder = load_vocoder(HIFIGAN_CHECKPOINT)
 
-n_timestepss = [1, 2, 3, 4, 5, 10, 15, 20, 25, 100, 200, 300, 400]
+n_timestepss = [50]
 for n_timesteps in n_timestepss:
     ## Number of ODE Solver steps
     #n_timesteps = 50
@@ -145,7 +147,7 @@ for n_timesteps in n_timestepss:
 
     outputs, rtfs = [], []
     rtfs_w = []
-    for data in (tqdm(test_data_list)):
+    for data in (tqdm(test_data_list[0:20])):
         output = synthesise(data["text"]) #, torch.tensor([15], device=device, dtype=torch.long).unsqueeze(0))
         #print(output['decoder_outputs_mel'].shape)
         output['waveform'] = to_waveform(output['mel'], vocoder)
@@ -175,13 +177,30 @@ for n_timesteps in n_timestepss:
         outputs.append(output)
 
         ## Display the synthesised waveform
-        ipd.display(ipd.Audio(output['waveform'], rate=16000))
+        #ipd.display(ipd.Audio(output['waveform'], rate=16000))
 
         ## Save the generated waveform
-        save_to_folder(data["filename"], output, OUTPUT_FOLDER)
+        #save_to_folder(data["filename"], output, OUTPUT_FOLDER)
 
         ## face
-        save_to_movement_csv(data["filename"], output, f"output/abi_single16khz_0667_movement_{n_timesteps}")
+        #save_to_movement_csv(data["filename"], output, f"output/abi_single16khz_0667_movement_{n_timesteps}")
+        
+        savefolder = "./multi_spectrograms"
+
+        decoder_output = output["decoder_outputs"].squeeze(0)
+        num_freqs, num_time_steps = decoder_output.shape
+        my_dpi = 300
+        plt.figure(figsize=(num_time_steps / my_dpi, num_freqs / my_dpi), dpi=my_dpi, frameon=False)
+        plt.axis('off')
+        
+        # origin='lower' keeps low frequencies at the bottom
+        plt.imshow(decoder_output.cpu().numpy(), aspect='auto', origin='lower', cmap='magma')
+        
+        # Remove all whitespace around the image
+        plt.subplots_adjust(top=1, bottom=0, right=1, left=0, hspace=0, wspace=0)
+        #plt.show()
+        name = data["filename"]
+        plt.savefig(os.path.join(savefolder, f"{name}.png"), dpi=my_dpi, pad_inches=0)
 
     #print(f"Number of ODE steps: {n_timesteps}")
     #print(f"Mean RTF:\t\t\t\t{np.mean(rtfs):.6f} ± {np.std(rtfs):.6f}")

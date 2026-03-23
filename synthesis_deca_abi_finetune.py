@@ -32,7 +32,7 @@ import pickle
 
 import logging
 logger = logging.getLogger(__name__)
-logging.basicConfig(filename='abi_single_16khz_0667_more.log', encoding='utf-8', level=logging.DEBUG)
+logging.basicConfig(filename='abi_finetune_16khz_0067.log', encoding='utf-8', level=logging.DEBUG)
 
 print(torch.cuda.is_available())
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -42,7 +42,7 @@ print(speechbrain.__version__)
 #finetune 100 step "logs/train/multimodal_single100k_verbatim_baseline/runs/2025-10-05_02-59-05/checkpoints/last.ckpt"
 #base 500 step "logs/train/multimodal_base_verbatim_baseline/runs/2025-09-11_14-47-30/checkpoints/last.ckpt"
 #kon single MATCHTTSGDECA_CHECKPOINT = "logs/train/multimodal_single_verbatim_baseline/runs/2025-05-25_02-52-53/checkpoints/last.ckpt"
-MATCHTTSGDECA_CHECKPOINT = "logs/train/multimodal_single100k_verbatim_baseline/runs/abi_scratch_decanew2/checkpoints/last.ckpt"
+MATCHTTSGDECA_CHECKPOINT = "logs/train/multimodal_finetune_verbatim_baseline/runs/abi_finetune_decanew_fixed/checkpoints/last.ckpt"
 HIFIGAN_CHECKPOINT = get_user_data_dir() / "generator_v1"#"hifigan_T2_v1"
 
 
@@ -69,7 +69,7 @@ for n_timesteps in n_timestepss:
     ## Number of ODE Solver steps
     #n_timesteps = 50
 
-    OUTPUT_FOLDER = f"output/abi_single16khz_0667_audio_{n_timesteps}"
+    OUTPUT_FOLDER = f"output/abi_finetune16khz_0667_audio_{n_timesteps}"
 
     ## Changes to the speaking rate
     length_scale=1.0
@@ -181,7 +181,7 @@ for n_timesteps in n_timestepss:
         save_to_folder(data["filename"], output, OUTPUT_FOLDER)
 
         ## face
-        save_to_movement_csv(data["filename"], output, f"output/abi_single16khz_0667_movement_{n_timesteps}")
+        save_to_movement_csv(data["filename"], output, f"output/abi_finetune16khz_0667_movement_{n_timesteps}")
 
     #print(f"Number of ODE steps: {n_timesteps}")
     #print(f"Mean RTF:\t\t\t\t{np.mean(rtfs):.6f} ± {np.std(rtfs):.6f}")

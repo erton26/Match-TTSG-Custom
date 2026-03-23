@@ -23,6 +23,7 @@ class Synthetizer():
 
         self.checkpoint_path = checkpoint_path
         self.model = MatchTTSGCustomDECA.load_from_checkpoint(checkpoint_path, map_location=self.device)
+        self.model.eval()
         self.vocoder = HIFIGAN.from_hparams(source=hifigan_source, savedir=hifigan_savedir)
 
         self.n_timesteps = n_timesteps
